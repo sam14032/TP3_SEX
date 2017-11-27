@@ -1,0 +1,17 @@
+﻿  Player.cpp
+  Main.cpp
+  Game.cpp
+c:\users\samuel\desktop\tp3_sex\tp3_sex\listener.hpp(42): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\samuel\desktop\tp3_sex\tp3_sex\listener.hpp(28): warning C4101: 'nb_Joueur': unreferenced local variable
+c:\users\samuel\desktop\tp3_sex\tp3_sex\game.cpp(66): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\samuel\desktop\tp3_sex\tp3_sex\game.cpp(85): warning C4244: 'argument': conversion from 'const int' to 'const float', possible loss of data
+  Generating Code...
+  TP3_SEX.vcxproj -> C:\Users\Samuel\Desktop\TP3_SEX\Debug\TP3_SEX.exe
+  TP3_SEX.vcxproj -> C:\Users\Samuel\Desktop\TP3_SEX\Debug\TP3_SEX.pdb (Full PDB)
+  C:\LibrairiesProgrammation\SFML-2.4.2\bin\Debug\openal32.dll
+  C:\LibrairiesProgrammation\SFML-2.4.2\bin\Debug\sfml-audio-d-2.dll
+  C:\LibrairiesProgrammation\SFML-2.4.2\bin\Debug\sfml-graphics-d-2.dll
+  C:\LibrairiesProgrammation\SFML-2.4.2\bin\Debug\sfml-network-d-2.dll
+  C:\LibrairiesProgrammation\SFML-2.4.2\bin\Debug\sfml-system-d-2.dll
+  C:\LibrairiesProgrammation\SFML-2.4.2\bin\Debug\sfml-window-d-2.dll
+  6 fichier(s) copié(s)
