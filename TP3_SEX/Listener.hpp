@@ -8,48 +8,53 @@ using namespace sf;
 class Listener
 {
 public:
-	TcpSocket socket_Listen;
-	void listening_Server(float position[],bool players_Connected[])
+	//01|#1|45|12|1|1|?1|@0045|&
+	TcpSocket socket_server_listen;
+	void fetch_position_from_server(float position[])
 	{
-		Socket::Status status = socket_Listen.connect("192.168.79.129", 8888);
-		socket_Listen.setBlocking(false);
-		std::cout << "NON BLOCK\n";
-		std::deque<char> data[2000];
-		std::size_t received;
-		std::string number = "";
-		int index = 0;
+		socket_server_listen.setBlocking(false);
 		Socket::Status is_connected = Socket::Done;
-		
-		while (is_connected == Socket::Done)
+		while (true)
 		{
-			std::cout << "Is connected !\n";
-			memset(data, 0, 2000);
-			is_connected = socket_Listen.receive(data, 2000, received);
-			char nb_Joueur[2];
-			//retreive data sent from the server.
-			char nb_user1 = data->front();
-			if (nb_user1 != NULL)
-			{
-				std::deque<char>::iterator it = std::find(data->begin(), data->end(), '&');
-				while (it != data->end())
-				{
-					while (data->front() != '|')
-					{
-						char add_nb = data->front();
-						number += add_nb;
-						data->pop_front();
-					}
-					position[index] = atof(number.c_str());
-					index++;
-					data->pop_front();
-					if (data->front() == '&')
-					{
-						data->pop_front();
-						it = std::find(data->begin(), data->end(), '&');
-					}
-				}
-			}
 
 		}
+
+	}
+	void listening_Server(float position[], bool players_Connected[])
+	{
+		//Socket::Status status = socket_server_listen.connect("192.168.79.109", 8000);
+		socket_server_listen.setBlocking(false);
+		//std::cout << "NON BLOCK\n";
+		char data[2000];
+		data[0] = 'o';
+		data[1] = 'k';
+		std::size_t received;
+		std::string number = "";
+		std::string test;
+		int index = 0;
+		Socket::Status is_connected = Socket::Done;
+
+		while (is_connected != Socket::Disconnected)
+		{
+			//memset(data, 0, 2000);
+			is_connected = socket_server_listen.receive(data, 2000, received);
+			char nb_Joueur[2];
+			static bool good = true;
+			std::cin >> test;
+			for (int i = 0; i<test.length(); i++)
+			{
+				if (good)
+				{
+					memset(data, 0, 2000);
+				}
+				good = false;
+				data[i] = test[i];
+			}
+			std::cout << "Is connected !\n";
+			std::cout << "Sending...\n";
+			socket_server_listen.send(data, 2000);
+			good = false;
+		}
+		std::cout << "Server unreachable !\n";
 	}
 };

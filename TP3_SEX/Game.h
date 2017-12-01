@@ -39,4 +39,6 @@ private:
 	bool player_connected[11] = { false };
 	bool connected = false;
 	bool finished = true;
+	Font font;
+	Text connection_stat;
 };

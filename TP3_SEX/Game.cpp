@@ -59,6 +59,16 @@ bool Game::init()
 	{
 		return false;
 	}
+	if (!font.loadFromFile("Ressources\\Fonts\\Peric.ttf"))
+	{
+		return false;
+	}
+	connection_stat.setColor(sf::Color::White);
+	connection_stat.setCharacterSize(30);
+	connection_stat.setFont(font);
+	connection_stat.setString("No connection");
+	connection_stat.setPosition(20, 360);
+
 
 	background.setTexture(backgroundT);
 	background.setPosition(0, 0);
@@ -82,16 +92,24 @@ void Game::getInputs()
 
 void Game::update()
 {
-	player1->update(WIDTH, HEIGHT);
-	//player2->update(WIDTH, HEIGHT);
+	if (connected)
+	{
+		player1->update(WIDTH, HEIGHT);
+	}
 }
 
 void Game::draw()
 {
 	mainWin.clear();
-
-	mainWin.draw(background);
-	player1->draw(mainWin);
+	if (connected)
+	{
+		mainWin.draw(background);
+		player1->draw(mainWin);
+	}
+	else
+	{
+		mainWin.draw(connection_stat);
+	}
 	//player2->draw(mainWin);
 
 	mainWin.display();
@@ -103,28 +121,50 @@ void Game::open_Connection(bool &statut, bool &thread_stat)
 	Time time_max = sf::seconds(1);
 	Listener server_listen;
 	int time_out = 0;
+	std::string try_again = "";
 	Socket::Status stat = Socket::Error;
-	while (stat != Socket::Done && time_out < 10)
+	while (try_again != "n")
 	{
-		stat = server_listen.socket_Listen.connect("192.168.79.129", 8888, time_max);
-		if (stat == Socket::Done)
+		while (stat != Socket::Done)
 		{
-			time_out = 12;
-		}
-		std::cout << "Connection : " << stat << std::endl;
-		std::cout << "try : " << time_out << std::endl;
-		time_out++;
-	}
-	if (time_out >= 10)
-	{
-		std::cout << "Server unreachable\n";
-	}
-	else if (stat == Socket::Done)
-	{
-		statut = true;
-		std::cout << "CONNECTION !\n";
-		server_listen.listening_Server(position, player_connected);
+			if (time_out < 10)
+			{
+				//10.200.23.90 cegep ste-foy
+				//maison 192.168.11.109
+				stat = server_listen.socket_server_listen.connect("192.168.11.109", 8000, time_max);
+				if (stat == Socket::Done)
+				{
+					time_out = 12;
+				}
+				std::cout << "Connection : " << stat << std::endl;
+				std::cout << "try : " << time_out << std::endl;
+				time_out++;
+			}
+			else
+			{
+				time_out = 999;
+				break;
+			}
 
+		}
+		if (time_out == 999)
+		{
+			std::cout << "Server unreachable\n";
+			std::cout << "Try again to connect (Y/N) : ";
+			std::cin >> try_again;
+			if (try_again == "y")
+			{
+				time_out = 0;
+			}
+		}
+		else if (stat == Socket::Done)
+		{
+			statut = true;
+			std::cout << "CONNECTION !\n";
+			server_listen.listening_Server(position, player_connected);
+
+		}
+		thread_stat = true;
 	}
-	thread_stat = true;
+
 }
