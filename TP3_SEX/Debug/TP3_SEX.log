@@ -1,3 +1,7 @@
-﻿  TP3_SEX.vcxproj -> C:\Users\Samuel\Documents\Ecole\Sys Exploitation\Client-Serveur\TP3_SEX\Debug\TP3_SEX.exe
-  TP3_SEX.vcxproj -> C:\Users\Samuel\Documents\Ecole\Sys Exploitation\Client-Serveur\TP3_SEX\Debug\TP3_SEX.pdb (Full PDB)
+﻿  Game.cpp
+c:\users\samuel\documents\ecole\test_algorithms\clients_tp3\clients-serveur\client_sfml\tp3_sex\game.cpp(65): warning C4996: 'sf::Text::setColor': was declared deprecated
+  c:\librairiesprogrammation\sfml-2.4.2\include\sfml\graphics\text.hpp(177): note: see declaration of 'sf::Text::setColor'
+c:\users\samuel\documents\ecole\test_algorithms\clients_tp3\clients-serveur\client_sfml\tp3_sex\game.cpp(101): warning C4244: 'argument': conversion from 'const int' to 'const float', possible loss of data
+  TP3_SEX.vcxproj -> C:\Users\Samuel\Documents\Ecole\TEST_ALGORITHMS\Clients_tp3\Clients-serveur\Client_sfml\Debug\TP3_SEX.exe
+  TP3_SEX.vcxproj -> C:\Users\Samuel\Documents\Ecole\TEST_ALGORITHMS\Clients_tp3\Clients-serveur\Client_sfml\Debug\TP3_SEX.pdb (Full PDB)
   0 fichier(s) copié(s)

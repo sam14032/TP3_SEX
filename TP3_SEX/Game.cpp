@@ -12,13 +12,12 @@ Game::Game()
 
 Game::~Game()
 {
-	delete player1;
-	//delete player2;
+
 }
 
 int Game::run()
 {
-	sf::Thread check_server([&] {Game::open_Connection(std::ref(connected), std::ref(finished)); });
+	sf::Thread check_server([&] {Game::open_Connection(std::ref(connected), std::ref(finished), std::ref(list_of_players), std::ref(player_list)); });
 	if (!init())
 	{
 		return EXIT_FAILURE;
@@ -72,8 +71,13 @@ bool Game::init()
 
 	background.setTexture(backgroundT);
 	background.setPosition(0, 0);
-
-	player1 = new Player(Vector2f(WIDTH / 2, HEIGHT / 2), player1T);
+	Vector2f pos{ 50,400 };
+	player1.init(pos, player1T);
+	for (int i=0; i<9; i++)
+	{
+		pos = {(float) (50 + 50 * i),400 };
+		player_list[i].init(pos, player1T);
+	}
 	//player2 = new Player(Vector2f(WIDTH / 2, HEIGHT / 2), player2T);
 
 	return true;
@@ -94,7 +98,7 @@ void Game::update()
 {
 	if (connected)
 	{
-		player1->update(WIDTH, HEIGHT);
+		player1.update(WIDTH, HEIGHT,std::ref(Listener::getInstance()->socket_server_listen));
 	}
 }
 
@@ -103,8 +107,19 @@ void Game::draw()
 	mainWin.clear();
 	if (connected)
 	{
+		
 		mainWin.draw(background);
-		player1->draw(mainWin);
+		int cpt = 0;
+		for (int i=0; i<9; i++)
+		{
+			if (player_list[i].is_active())
+			{
+				cpt++;
+				player_list[i].draw(mainWin);
+			}
+		}
+		player1.draw(mainWin);
+		//std::cout << cpt;
 	}
 	else
 	{
@@ -115,11 +130,12 @@ void Game::draw()
 	mainWin.display();
 }
 
-void Game::open_Connection(bool &statut, bool &thread_stat)
+void Game::open_Connection(bool &statut, bool &thread_stat, std::map<int, Player*> &players_list, Player players[])
 {
+	bool connected = false;
 	thread_stat = false;
 	Time time_max = sf::seconds(1);
-	Listener server_listen;
+	Listener* server_listen = Listener::getInstance();
 	int time_out = 0;
 	std::string try_again = "";
 	Socket::Status stat = Socket::Error;
@@ -131,7 +147,7 @@ void Game::open_Connection(bool &statut, bool &thread_stat)
 			{
 				//10.200.23.90 cegep ste-foy
 				//maison 192.168.11.109
-				stat = server_listen.socket_server_listen.connect("192.168.11.109", 8000, time_max);
+				stat = server_listen->socket_server_listen.connect("192.168.11.109", 8000, time_max);
 				if (stat == Socket::Done)
 				{
 					time_out = 12;
@@ -159,10 +175,14 @@ void Game::open_Connection(bool &statut, bool &thread_stat)
 		}
 		else if (stat == Socket::Done)
 		{
-			statut = true;
-			std::cout << "CONNECTION !\n";
-			server_listen.listening_Server(position, player_connected);
-
+			if (!connected)
+			{
+				statut = true;
+				std::cout << "CONNECTION !\n";
+				server_listen->listening_Server(position, player_connected, std::ref(players_list), std::ref(nb_players_connected),std::ref(players));
+				connected = true;
+			}
+			
 		}
 		thread_stat = true;
 	}

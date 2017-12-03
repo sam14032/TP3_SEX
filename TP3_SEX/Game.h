@@ -13,7 +13,9 @@ public:
 	~Game();
 	int run();
 
-	void Game::open_Connection(bool &statut, bool &thread_stat);
+	Player player_list[9];
+	void Game::open_Connection(bool &statut, bool &thread_stat, std::map<int, Player*> &players_list,Player players[]);
+	int nb_players_connected = 0;
 private:
 	const int WIDTH = 1280;
 	const int HEIGHT = 720;
@@ -22,12 +24,9 @@ private:
 	void getInputs();
 	void update();
 	void draw();
-
-	Player *player1;
-	Player *player2;
-
+	std::map<int, Player*> list_of_players;
+	Player player1;
 	Texture player1T;
-	Texture player2T;
 
 	Sprite background;
 	Texture backgroundT;
