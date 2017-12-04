@@ -12,7 +12,6 @@ public:
 	Game();
 	~Game();
 	int run();
-
 	Player player_list[9];
 	void Game::open_Connection(bool &statut, bool &thread_stat, std::map<int, Player*> &players_list,Player players[]);
 	int nb_players_connected = 0;
@@ -40,4 +39,5 @@ private:
 	bool finished = true;
 	Font font;
 	Text connection_stat;
+	
 };
