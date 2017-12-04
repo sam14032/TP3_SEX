@@ -97,6 +97,7 @@ public:
 			Player* player_null = nullptr;
 			list_player.insert_or_assign(player_id, player_null);
 		}
+		std::cout << data_fetched_from_server << std::endl;
 		//check the data at specific position.
 		while (data_fetched_from_server[position_in_the_data_string] != '&')
 		{
@@ -122,7 +123,8 @@ public:
 					// if the data is not equal to junk.
 					if (other_player_id != 999)
 					{
-						std::cout << other_player_id << " = " << player_id << std::endl;
+						std::cout << "Other 1 :" << other_player_id << std::endl;
+						//std::cout << other_player_id << " = " << player_id << std::endl;
 						//check if the data isn't the current player id.
 						if (other_player_id != player_id)
 						{
@@ -134,7 +136,7 @@ public:
 								//check through all the current ids in the client's system.
 								if (id_player_connected[i] == other_player_id)
 								{
-									std::cout << "ID from server : "<<other_player_id <<std::endl << "ID from client : "<< id_player_connected[current_player_iterator] <<std::endl;
+									std::cout << "ID from server : "<<other_player_id <<std::endl << "ID from client : "<< id_player_connected[i] <<std::endl;
 									first_connection = false;
 								}
 							}
@@ -153,14 +155,18 @@ public:
 								id_player_connected[current_player_iterator] = other_player_id;
 								new_id[current_player_iterator] = other_player_id;
 							}
-						} //end of current checked player id != current id
+						}//end of current checked player id != current id
+						else
+						{
+							//std::cout << "egal" << std::endl;
+						}
 					}
 					else
 					{
 						//add one player to the player's count.
 						current_player_iterator++;
 						std::cout << "Other : " << other_player_id << std::endl;
-						std::cout << "Bad loop :" << current_player_iterator << std::endl;
+						//std::cout << "Bad loop :" << current_player_iterator << std::endl;
 						new_id[current_player_iterator] = other_player_id;
 					}
 					//end of junk check
@@ -176,9 +182,9 @@ public:
 		//{
 		//	//check if data is initialized or not.
 		//	//if init, check if old and new id is the same : else, change information to offline.
-		//	if (old_id[i] != 999 && old_id[i] != new_id[i])
+		//	if (new_id[i] != 999 && old_id[i] != new_id[i])
 		//	{
-
+		//		std::cout << i;
 		//		player_list[i].set_active(false);
 		//	}
 		//	old_id[i] = new_id[i];

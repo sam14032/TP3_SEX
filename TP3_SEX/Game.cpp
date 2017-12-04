@@ -147,7 +147,7 @@ void Game::open_Connection(bool &statut, bool &thread_stat, std::map<int, Player
 			{
 				//10.200.23.90 cegep ste-foy
 				//maison 192.168.11.109
-				stat = server_listen->socket_server_listen.connect("192.168.11.109", 8000, time_max);
+				stat = server_listen->socket_server_listen.connect("10.200.23.90", 8000, time_max);
 				if (stat == Socket::Done)
 				{
 					time_out = 12;
