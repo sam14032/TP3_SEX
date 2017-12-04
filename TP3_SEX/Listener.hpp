@@ -90,12 +90,13 @@ public:
 			//store the current player's id in the first place of the array.
 			player_id = stoi(num_to_int);
 			id_player_connected[0] = player_id;
+			new_id[0] = player_id;
+			old_id[0] = player_id;
 			//info du joueur.
 			//add the current player's instance and id in the watch list.
 			Player* player_null = nullptr;
 			list_player.insert_or_assign(player_id, player_null);
 		}
-		std::cout << "Current id : " << player_id <<std::endl;
 		//check the data at specific position.
 		while (data_fetched_from_server[position_in_the_data_string] != '&')
 		{
@@ -121,9 +122,11 @@ public:
 					// if the data is not equal to junk.
 					if (other_player_id != 999)
 					{
+						std::cout << other_player_id << " = " << player_id << std::endl;
 						//check if the data isn't the current player id.
 						if (other_player_id != player_id)
 						{
+							std::cout << "Current id : " << player_id << std::endl;
 							//reset the check to true every loop. (state where its the first other player's connection)
 							first_connection = true;
 							for (int i = 1; i<11; i++)
@@ -138,17 +141,29 @@ public:
 							//if not in the system, add to client's system.
 							if (first_connection)
 							{
+								std::cout << "ID other : " << other_player_id << std::endl;
 								//add one player to the player's count.
 								current_player_iterator++;
+								std::cout << "Good loop : "<< current_player_iterator << std::endl;
 								//add one active player to the active player watch list.
 								player_list[current_player_iterator].set_active(true);
 								//add the id of the player and create a new player's instance.
 								list_player.insert_or_assign(other_player_id, &player_list[current_player_iterator]);
 								//add the current other player's id to the player's id watch list.
 								id_player_connected[current_player_iterator] = other_player_id;
+								new_id[current_player_iterator] = other_player_id;
 							}
 						} //end of current checked player id != current id
-					} //end of junk check
+					}
+					else
+					{
+						//add one player to the player's count.
+						current_player_iterator++;
+						std::cout << "Other : " << other_player_id << std::endl;
+						std::cout << "Bad loop :" << current_player_iterator << std::endl;
+						new_id[current_player_iterator] = other_player_id;
+					}
+					//end of junk check
 				} //end check if init.
 				//reset the string's data container to empty. (avoid residual memory junk).
 				number = "";
@@ -156,11 +171,25 @@ public:
 			//incremente the iterator to move in the data's array.
 			position_in_the_data_string++;
 		}
+		//check if someone went offline.
+		//for (int i=1;i<11;i++)
+		//{
+		//	//check if data is initialized or not.
+		//	//if init, check if old and new id is the same : else, change information to offline.
+		//	if (old_id[i] != 999 && old_id[i] != new_id[i])
+		//	{
+
+		//		player_list[i].set_active(false);
+		//	}
+		//	old_id[i] = new_id[i];
+		//}
 		memset(data_fetched_from_server, 0, 2000);
 	}
 private:
 	static Listener* instance;
 	int id_player_connected[11];
+	int new_id[11] = { 999,999, 999, 999, 999, 999, 999, 999, 999, 999, 999 };;
+	int old_id[11] = {999,999, 999, 999, 999, 999, 999, 999, 999, 999, 999};
 	char data_fetched_from_server[2000];
 	size_t received;
 	Listener()
