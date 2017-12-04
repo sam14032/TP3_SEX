@@ -154,6 +154,7 @@ public:
 								//add the current other player's id to the player's id watch list.
 								id_player_connected[current_player_iterator] = other_player_id;
 								new_id[current_player_iterator] = other_player_id;
+								old_id[current_player_iterator] = other_player_id;
 							}
 						}//end of current checked player id != current id
 						else
@@ -161,14 +162,14 @@ public:
 							//std::cout << "egal" << std::endl;
 						}
 					}
-					else
-					{
-						//add one player to the player's count.
-						current_player_iterator++;
-						std::cout << "Other : " << other_player_id << std::endl;
-						//std::cout << "Bad loop :" << current_player_iterator << std::endl;
-						new_id[current_player_iterator] = other_player_id;
-					}
+					//else
+					//{
+					//	//add one player to the player's count.
+					//	current_player_iterator++;
+					//	std::cout << "Other : " << other_player_id << std::endl;
+					//	//std::cout << "Bad loop :" << current_player_iterator << std::endl;
+					//	new_id[current_player_iterator] = other_player_id;
+					//}
 					//end of junk check
 				} //end check if init.
 				//reset the string's data container to empty. (avoid residual memory junk).
@@ -182,7 +183,7 @@ public:
 		//{
 		//	//check if data is initialized or not.
 		//	//if init, check if old and new id is the same : else, change information to offline.
-		//	if (new_id[i] != 999 && old_id[i] != new_id[i])
+		//	if (old_id[i] != 999 && old_id[i] != new_id[i])
 		//	{
 		//		std::cout << i;
 		//		player_list[i].set_active(false);
