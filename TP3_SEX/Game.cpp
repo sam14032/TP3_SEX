@@ -40,7 +40,6 @@ int Game::run()
 		update();
 		draw();
 	}
-
 	return EXIT_SUCCESS;
 }
 
@@ -179,7 +178,7 @@ void Game::open_Connection(bool &statut, bool &thread_stat, std::map<int, Player
 			{
 				statut = true;
 				std::cout << "CONNECTION !\n";
-				server_listen->listening_Server(position, player_connected, std::ref(players_list), std::ref(nb_players_connected),std::ref(players));
+				server_listen->listening_Server(position, player_connected, std::ref(players_list), std::ref(nb_players_connected),std::ref(players),player1);
 				connected = true;
 			}
 			

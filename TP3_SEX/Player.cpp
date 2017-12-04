@@ -1,6 +1,8 @@
 #include "Player.h"
-
-
+#include <string>;
+#include <iomanip>
+#include <sstream>;
+using namespace std;
 Player::Player()
 {
 	position = Vector2f(0, 0);
@@ -27,7 +29,7 @@ void Player::update(const float &widthLimit, const float &heightLimit, TcpSocket
 	bool input = getInputs(widthLimit, heightLimit);
 	if (input)
 	{
-		char* data = "01|#1|45|12|1|1|?1|@0045|&";
+		char* data = dataCryped(active_command.id,active_command.player_action,active_command.pos_now,active_command.direction,0,0,0);
 		server.send(data, 2000);
 	}
 	
@@ -73,7 +75,7 @@ bool Player::is_active()
 	return active;
 }
 
-Vector2f Player::advance(Vector2f &direction)
+Vector2f Player::advance(Vector2i &direction)
 {
 	return Vector2f(position.x + direction.x * SPEED, position.y + direction.y * SPEED);
 }
@@ -81,41 +83,45 @@ Vector2f Player::advance(Vector2f &direction)
 bool Player::getInputs(const float &widthLimit, const float &heightLimit)
 {
 	bool input = false;
-	Vector2f direction;
+	Vector2i mouvement;
 	// Up
 	if (sf::Keyboard::isKeyPressed(Keyboard::W) || sf::Keyboard::isKeyPressed(Keyboard::Up))
 	{
-		direction.y += -1;
+		mouvement.y += -1;
+		active_command.player_action=(int)actionTypes::MOVE;
 		input = true;
 		
 	}
 	// Left
 	if (sf::Keyboard::isKeyPressed(Keyboard::A) || sf::Keyboard::isKeyPressed(Keyboard::Left))
 	{
-		direction.x += -1;
+		mouvement.x += -1;
+		active_command.player_action = (int)actionTypes::MOVE;
 		input = true;
 	}
 	// Right
 	if (sf::Keyboard::isKeyPressed(Keyboard::D) || sf::Keyboard::isKeyPressed(Keyboard::Right))
 	{
-		direction.x += 1;
+		mouvement.x += 1;
+		active_command.player_action = (int)actionTypes::MOVE;
 		input = true;
 	}
 	// Down
 	if (sf::Keyboard::isKeyPressed(Keyboard::S) || sf::Keyboard::isKeyPressed(Keyboard::Down))
 	{
-		direction.y += 1;
+		mouvement.y += 1;
+		active_command.player_action = (int)actionTypes::MOVE;
 		input = true;
 	}
 	Vector2f old_pos = position;
-	Vector2f newPos = advance(direction);
+	Vector2f newPos = advance(active_command.direction);
 	if (checkOutOfBound(widthLimit, heightLimit, newPos))
 	{
 		position = newPos;
 		spritePlayer.setPosition(position);
 	}
 
-	active_command.direction = direction;
+	active_command.direction = mouvement;
 	active_command.pos_now = position;
 	active_command.angle = 0;
 	active_command.attack_type = 0;
@@ -134,4 +140,50 @@ bool Player::checkOutOfBound(const float &widthLimit, const float &heightLimit, 
 	}
 
 	return false;
+}
+char* Player::dataCryped(const int playerId,const int actionType, const Vector2f currentPosition, const Vector2i direction,const int attack,const int target,const float angle)
+{
+
+	string dataStr;
+
+	string playerIdStr = to_string(playerId);
+	string actionTypeStr=to_string(actionType);
+	ostringstream currentPositionXStr;
+	currentPositionXStr << setprecision(5) << currentPosition.x;
+	ostringstream currentPositionYstr;
+	currentPositionYstr<<setprecision(5)<<currentPosition.y;
+	string directionMoveXStr=to_string(direction.x);
+	string directionMoveYStr=to_string(direction.y);
+	string attackStr=to_string(attack);
+	string targetStr=to_string(target);
+	ostringstream angleStr;
+	angleStr<<setprecision(3)<<angle;
+	
+
+	dataStr.append(playerIdStr);
+	dataStr.append("|");
+	dataStr.append("#");
+	dataStr.append(actionTypeStr);
+	dataStr.append("|");
+	dataStr.append(currentPositionXStr.str());
+	dataStr.append("|");
+	dataStr.append(currentPositionYstr.str());
+	dataStr.append("|");
+	dataStr.append(directionMoveXStr);
+	dataStr.append("|");
+	dataStr.append(directionMoveYStr);
+	dataStr.append("|");
+	dataStr.append("?");
+	dataStr.append(attackStr);
+	dataStr.append("|");
+	dataStr.append("@");
+	dataStr.append(targetStr);
+	dataStr.append("|");
+	dataStr.append(angleStr.str());
+	dataStr.append("|");
+	dataStr.append("&");
+
+	char *data= new char[dataStr.length() + 1];
+	strcpy(data, dataStr.c_str());
+	return data;
 }

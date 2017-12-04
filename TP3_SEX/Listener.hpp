@@ -34,7 +34,7 @@ public:
 		}
 
 	}
-	void listening_Server(float position[], bool players_Connected[], std::map<int, Player*> &list_player, int &nb_player_connected,Player player_list[])
+	void listening_Server(float position[], bool players_Connected[], std::map<int, Player*> &list_player, int &nb_player_connected,Player player_list[],Player player1)
 	{
 		socket_server_listen.setBlocking(false);
 		Socket::Status is_connected = Socket::Done;
@@ -47,13 +47,13 @@ public:
 			if (data_fetched_from_server[0] == 'I')
 			{
 				update_client_view(std::ref(data_fetched_from_server), std::ref(list_player),
-					std::ref(nb_player_connected), std::ref(player_list));
+					std::ref(nb_player_connected), std::ref(player_list),std::ref(player1));
 			}
 		}
 	}
 
 	// if data received from server start with I then update the client current view by adding player.
-	void update_client_view(char data_fetched_from_server[],std::map<int, Player*> &list_player, int &nb_player_connected, Player player_list[])
+	void update_client_view(char data_fetched_from_server[],std::map<int, Player*> &list_player, int &nb_player_connected, Player player_list[],Player &player1)
 	{
 		static bool first_connection = true;
 		int current_player_iterator = 0;
@@ -94,8 +94,8 @@ public:
 			old_id[0] = player_id;
 			//info du joueur.
 			//add the current player's instance and id in the watch list.
-			Player* player_null = nullptr;
-			list_player.insert_or_assign(player_id, player_null);
+			player1.active_command.id=player_id;
+			list_player.insert_or_assign(player_id, &player1);
 		}
 		std::cout << data_fetched_from_server << std::endl;
 		//check the data at specific position.
