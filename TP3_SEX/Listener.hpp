@@ -36,118 +36,133 @@ public:
 	}
 	void listening_Server(float position[], bool players_Connected[], std::map<int, Player*> &list_player, int &nb_player_connected,Player player_list[])
 	{
-		int id_player_connected[11];
-		bool first_connection = false;
-		int player = 0;
-		int player_id = 0;
-		int ptr = 4;
-		bool init_nb_player = false;
 		socket_server_listen.setBlocking(false);
-		//std::cout << "NON BLOCK\n";
-		char data[2000];
-		data[0] = 'o';
-		data[1] = 'k';
-		std::size_t received;
-		std::string number = "";
-		std::string test;
-		std::stringstream ss;
-		std::string num_to_int = "";
-		int id = 0;
-		int index = 0;
 		Socket::Status is_connected = Socket::Done;
 		
 		while (is_connected != Socket::Disconnected)
 		{
-			player = 0;
-			ptr = 4;
-			ss.str("");
-			//memset(data, 0, 2000);
-			is_connected = socket_server_listen.receive(data, 2000, received);
+			is_connected = socket_server_listen.receive(data_fetched_from_server, 2000, received);
 			sleep(milliseconds(1));
-			if (data[0] == 'I')
+
+			if (data_fetched_from_server[0] == 'I')
 			{
-				ss << data[2];
+				update_client_view(std::ref(data_fetched_from_server), std::ref(list_player),
+					std::ref(nb_player_connected), std::ref(player_list));
+			}
+		}
+	}
+
+	// if data received from server start with I then update the client current view by adding player.
+	void update_client_view(char data_fetched_from_server[],std::map<int, Player*> &list_player, int &nb_player_connected, Player player_list[])
+	{
+		static bool first_connection = true;
+		int current_player_iterator = 0;
+		static int player_id = 777;
+		int position_in_the_data_string = 4;
+		bool init_nb_player = false;
+
+		int other_player_id = 0;
+		std::size_t received;
+		//char streamed in a string to convert to int
+		std::string number = "";
+		//stringstream
+		std::stringstream ss;
+		//string to convert and get the id.
+		std::string num_to_int = "";
+		//id assigné au joueur.
+		//check the 3rd data byte and convert to int which give the player id.
+		//if player_id not initialized, assign data.
+		if (player_id == 777)
+		{
+			ss << data_fetched_from_server[2];
+			num_to_int = ss.str();
+			ss.str("");
+			if (stoi(num_to_int) != 0)
+			{
+				ss << data_fetched_from_server[1] << data_fetched_from_server[2];
 				num_to_int = ss.str();
-				ss.str("");
-				if (stoi(num_to_int) !=0)
+			}
+			else
+			{
+				ss << data_fetched_from_server[1];
+				num_to_int = ss.str();
+			}
+			//store the current player's id in the first place of the array.
+			player_id = stoi(num_to_int);
+			id_player_connected[0] = player_id;
+			//info du joueur.
+			//add the current player's instance and id in the watch list.
+			Player* player_null = nullptr;
+			list_player.insert_or_assign(player_id, player_null);
+		}
+		std::cout << "Current id : " << player_id <<std::endl;
+		//check the data at specific position.
+		while (data_fetched_from_server[position_in_the_data_string] != '&')
+		{
+			char current_char = data_fetched_from_server[position_in_the_data_string];
+			//check if the current_char is a data separator.
+			if (current_char != '|')
+			{
+				number += current_char;
+			}
+			//if separator, convert the data we've stored in the string to a int.
+			else
+			{
+				// init the number of player everytime this method is called.
+				if (!init_nb_player)
 				{
-					ss << data[1] << data[2];
-					num_to_int = ss.str();
+					nb_player_connected = stoi(number);
+					init_nb_player = true;
 				}
 				else
 				{
-					ss << data[1];
-					num_to_int = ss.str();
-				}
-				if (stoi(num_to_int) !=19)
-				{
-					player_id = stoi(num_to_int);
-				}
-				id_player_connected[0] = player_id;
-				//info du joueur.
-				Player* player_null = nullptr;
-				list_player.insert_or_assign(player_id, player_null);
-				std::cout << "ID : " << player_id;
-				//std::cout << "Initialisation data";
-				while (data[ptr] != '&')
-				{
-					char add_nb = data[ptr];
-					if (add_nb != '|')
+					//convert the received data to a int id.
+					other_player_id = stoi(number);
+					// if the data is not equal to junk.
+					if (other_player_id != 999)
 					{
-						number += add_nb;
-					}
-					else
-					{
-						if (!init_nb_player)
+						//check if the data isn't the current player id.
+						if (other_player_id != player_id)
 						{
-							nb_player_connected = stoi(number);
-							init_nb_player = true;
-							//std::cout << "CONNECT :" << nb_player_connected << std::endl;
-						}
-						else
-						{
-							id = stoi(number);
-							if (id !=999)
+							//reset the check to true every loop. (state where its the first other player's connection)
+							first_connection = true;
+							for (int i = 1; i<11; i++)
 							{
-								if (id != player_id)
+								//check through all the current ids in the client's system.
+								if (id_player_connected[i] == other_player_id)
 								{
-									
-									for (int i=1;i<11;i++)
-									{
-										if (id_player_connected[i] != id)
-										{
-											std::cout << id << " = " << id_player_connected[player];
-											//std::cout << id << " = " << player_id << std::endl;
-											first_connection = true;
-										}
-									}
-									if (first_connection)
-									{
-										player++;
-										std::cout << id << " = " << player_id << std::endl;
-										player_list[player].set_active(true);
-										list_player.insert_or_assign(id, &player_list[player]);
-										id_player_connected[player] = id;
-										first_connection = false;
-										std::cout << player << std::endl;
-									}
+									std::cout << "ID from server : "<<other_player_id <<std::endl << "ID from client : "<< id_player_connected[current_player_iterator] <<std::endl;
+									first_connection = false;
 								}
 							}
-							//std::cout << "ID :" << id << std::endl;
-							
-						}
-						number = "";
-					}
-					ptr++;
-				}
-				//std::cout << player_list[0].getPosition().x<<std::endl<< player_list[0].getPosition().x << std::endl;
-				memset(data, 0, 2000);
+							//if not in the system, add to client's system.
+							if (first_connection)
+							{
+								//add one player to the player's count.
+								current_player_iterator++;
+								//add one active player to the active player watch list.
+								player_list[current_player_iterator].set_active(true);
+								//add the id of the player and create a new player's instance.
+								list_player.insert_or_assign(other_player_id, &player_list[current_player_iterator]);
+								//add the current other player's id to the player's id watch list.
+								id_player_connected[current_player_iterator] = other_player_id;
+							}
+						} //end of current checked player id != current id
+					} //end of junk check
+				} //end check if init.
+				//reset the string's data container to empty. (avoid residual memory junk).
+				number = "";
 			}
+			//incremente the iterator to move in the data's array.
+			position_in_the_data_string++;
 		}
-		//std::cout << "Server unreachable !\n";
+		memset(data_fetched_from_server, 0, 2000);
 	}
 private:
 	static Listener* instance;
+	int id_player_connected[11];
+	char data_fetched_from_server[2000];
+	size_t received;
 	Listener()
 	{
 		
@@ -156,3 +171,5 @@ private:
 	
 };
 Listener* Listener::instance = nullptr;
+
+

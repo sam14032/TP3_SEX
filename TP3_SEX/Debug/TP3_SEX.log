@@ -1,4 +1,5 @@
 ﻿  Game.cpp
+c:\users\samuel\documents\ecole\test_algorithms\clients_tp3\clients-serveur\client_sfml\tp3_sex\listener.hpp(65): warning C4101: 'received': unreferenced local variable
 c:\users\samuel\documents\ecole\test_algorithms\clients_tp3\clients-serveur\client_sfml\tp3_sex\game.cpp(65): warning C4996: 'sf::Text::setColor': was declared deprecated
   c:\librairiesprogrammation\sfml-2.4.2\include\sfml\graphics\text.hpp(177): note: see declaration of 'sf::Text::setColor'
 c:\users\samuel\documents\ecole\test_algorithms\clients_tp3\clients-serveur\client_sfml\tp3_sex\game.cpp(101): warning C4244: 'argument': conversion from 'const int' to 'const float', possible loss of data
