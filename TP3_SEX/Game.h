@@ -13,18 +13,18 @@ public:
 	~Game();
 	int run();
 	Player player_list[9];
-	void Game::open_Connection(bool &statut, bool &thread_stat, std::map<int, Player*> &players_list,Player players[]);
+	void Game::open_Connection(bool &statut, bool &thread_stat, std::map<int, Player*> &players_list,Player players[],Player &player,char* data);
 	int nb_players_connected = 0;
+	Player player1;
 private:
 	const int WIDTH = 1280;
 	const int HEIGHT = 720;
-
+	char* data = nullptr;
 	bool init();
 	void getInputs();
 	void update();
 	void draw();
 	std::map<int, Player*> list_of_players;
-	Player player1;
 	Texture player1T;
 
 	Sprite background;

@@ -17,7 +17,8 @@ Game::~Game()
 
 int Game::run()
 {
-	sf::Thread check_server([&] {Game::open_Connection(std::ref(connected), std::ref(finished), std::ref(list_of_players), std::ref(player_list)); });
+	sf::Thread check_server([&] {Game::open_Connection(std::ref(connected), std::ref(finished), std::ref(list_of_players),
+		std::ref(player_list),std::ref(player1), std::ref(data)); });
 	if (!init())
 	{
 		return EXIT_FAILURE;
@@ -74,7 +75,7 @@ bool Game::init()
 	player1.init(pos, player1T);
 	for (int i=0; i<9; i++)
 	{
-		pos = {(float) (50 + 50 * i),400 };
+		pos = {0,0 };
 		player_list[i].init(pos, player1T);
 	}
 	//player2 = new Player(Vector2f(WIDTH / 2, HEIGHT / 2), player2T);
@@ -97,7 +98,7 @@ void Game::update()
 {
 	if (connected)
 	{
-		player1.update(WIDTH, HEIGHT,std::ref(Listener::getInstance()->socket_server_listen));
+		player1.update(WIDTH, HEIGHT);
 	}
 }
 
@@ -129,7 +130,7 @@ void Game::draw()
 	mainWin.display();
 }
 
-void Game::open_Connection(bool &statut, bool &thread_stat, std::map<int, Player*> &players_list, Player players[])
+void Game::open_Connection(bool &statut, bool &thread_stat, std::map<int, Player*> &players_list, Player players[],Player &player,char* data)
 {
 	bool connected = false;
 	thread_stat = false;
@@ -146,7 +147,7 @@ void Game::open_Connection(bool &statut, bool &thread_stat, std::map<int, Player
 			{
 				//10.200.23.90 cegep ste-foy
 				//maison 192.168.11.109
-				stat = server_listen->socket_server_listen.connect("10.200.23.90", 5000, time_max);
+				stat = server_listen->socket_server_listen.connect("192.168.11.109", 5000, time_max);
 				if (stat == Socket::Done)
 				{
 					time_out = 12;
@@ -178,7 +179,7 @@ void Game::open_Connection(bool &statut, bool &thread_stat, std::map<int, Player
 			{
 				statut = true;
 				std::cout << "CONNECTION !\n";
-				server_listen->listening_Server(position, player_connected, std::ref(players_list), std::ref(nb_players_connected),std::ref(players),player1);
+				server_listen->listening_Server(position, player_connected, std::ref(players_list), std::ref(nb_players_connected),std::ref(players),std::ref(player),std::ref(data));
 				connected = true;
 			}
 			
