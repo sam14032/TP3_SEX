@@ -44,11 +44,13 @@ public:
 			}*/
 			if (data_fetched_from_server[0] == 'C')
 			{
+				std::cout << data_fetched_from_server << std::endl;
 				update_client_view(std::ref(data_fetched_from_server),
 					std::ref(nb_player_connected), std::ref(player_list));
 			}
 			if (data_fetched_from_server[0] == 'I')
 			{
+				std::cout << data_fetched_from_server << std::endl;
 				init_own_client_data(std::ref(data_fetched_from_server),
 					std::ref(nb_player_connected), std::ref(player1));
 			}
@@ -59,6 +61,7 @@ public:
 			}
 			if (data_fetched_from_server[0] == 'U')
 			{
+				std::cout << data_fetched_from_server << std::endl;
 				update_view_with_player_already_on(std::ref(data_fetched_from_server),
 					std::ref(nb_player_connected), std::ref(player_list));
 			}
@@ -72,6 +75,7 @@ public:
 			}
 			if (data_fetched_from_server[0] == 'P')
 			{
+				std::cout << data_fetched_from_server << std::endl;
 				update_other_player_position(std::ref(data_fetched_from_server), std::ref(player_list));
 			}
 			buffer++;
@@ -327,18 +331,17 @@ public:
 				if (data_formatted==0)
 				{
 					other_player_id = stoi(number);
-					data_formatted++;
 				}
 				if (data_formatted ==1)
 				{
-					position.x = stoi(number);
-					data_formatted++;
+					position.x = stof(number);
 				}
 				if (data_formatted == 2)
 				{
-					position.y = stoi(number);
-					data_formatted++;
+					position.y = stof(number);
 				}
+				data_formatted++;
+				number = "";
 			}
 
 			position_in_the_data_string++;
@@ -347,8 +350,10 @@ public:
 		{
 			if (player_list[i].get_id() == other_player_id)
 			{
+				std::cout << i;
 				player_list[i].setPosX(position.x);
 				player_list[i].setPosY(position.y);
+				player_list[i].set_drawing_position();
 				break;
 			}
 		}
